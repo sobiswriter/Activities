@@ -9,6 +9,7 @@ import {
   HelpCircle,
   Users,
   Eye,
+  MessageSquareQuote,
 } from "lucide-react";
 import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
@@ -87,6 +88,14 @@ export default function Home() {
       icon: <Eye className="w-12 h-12" />,
       color: "bg-orange-500/20",
       textColor: "text-orange-500",
+    },
+    {
+      href: "/caption-this",
+      title: "Caption This!",
+      description: "Generate a weird image and write a funny caption.",
+      icon: <MessageSquareQuote className="w-12 h-12" />,
+      color: "bg-sky-500/20",
+      textColor: "text-sky-500",
     },
   ];
 
