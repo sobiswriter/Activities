@@ -11,6 +11,7 @@ import {
   Eye,
   MessageSquareQuote,
   PersonStanding,
+  Dumbbell,
 } from "lucide-react";
 import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
@@ -105,6 +106,14 @@ export default function Home() {
       icon: <PersonStanding className="w-12 h-12" />,
       color: "bg-pink-500/20",
       textColor: "text-pink-500",
+    },
+    {
+      href: "/fitness-challenge",
+      title: "Fitness Challenge",
+      description: "Challenge yourself and see how you rank on the leaderboard.",
+      icon: <Dumbbell className="w-12 h-12" />,
+      color: "bg-green-500/20",
+      textColor: "text-green-500",
     },
   ];
 
