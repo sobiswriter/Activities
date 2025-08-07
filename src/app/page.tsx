@@ -10,6 +10,7 @@ import {
   Users,
   Eye,
   MessageSquareQuote,
+  PersonStanding,
 } from "lucide-react";
 import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
@@ -96,6 +97,14 @@ export default function Home() {
       icon: <MessageSquareQuote className="w-12 h-12" />,
       color: "bg-sky-500/20",
       textColor: "text-sky-500",
+    },
+    {
+      href: "/charades",
+      title: "Charades with AI",
+      description: "Act out the prompt from the AI. No talking!",
+      icon: <PersonStanding className="w-12 h-12" />,
+      color: "bg-pink-500/20",
+      textColor: "text-pink-500",
     },
   ];
 

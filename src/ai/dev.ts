@@ -13,4 +13,6 @@ import '@/ai/flows/generate-most-likely-to.ts';
 import '@/ai/flows/generate-guess-the-name.ts';
 import '@/ai/flows/generate-image.ts';
 import '@/ai/flows/generate-caption-image-prompt.ts';
+import '@/ai/flows/generate-charades-prompt.ts';
+
 
