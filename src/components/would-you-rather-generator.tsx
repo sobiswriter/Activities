@@ -40,7 +40,7 @@ export function WouldYouRatherGenerator() {
 
   const getCardClasses = (option: "A" | "B") => {
     return cn(
-      "cursor-pointer transition-all duration-300 ease-in-out hover:shadow-lg",
+      "cursor-pointer transition-all duration-300 ease-in-out hover:shadow-lg h-full",
       selectedOption === null ? "hover:scale-105" : "",
       selectedOption === option ? "scale-105 bg-primary/20 border-primary shadow-xl" : "",
       selectedOption !== null && selectedOption !== option ? "opacity-50 scale-95" : ""
@@ -56,9 +56,9 @@ export function WouldYouRatherGenerator() {
       {data && (
         <div className="space-y-4 text-center">
             <h2 className="text-2xl font-bold text-primary">Would You Rather...</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
+            <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-4 items-stretch">
                 <Card className={getCardClasses("A")} onClick={() => handleSelectOption("A")}>
-                    <CardContent className="p-6 text-xl font-medium flex items-center justify-center h-full">
+                    <CardContent className="p-6 text-xl font-medium flex items-center justify-center min-h-[12rem]">
                         <p>{data.optionA}</p>
                     </CardContent>
                 </Card>
@@ -68,7 +68,7 @@ export function WouldYouRatherGenerator() {
                 </div>
 
                 <Card className={getCardClasses("B")} onClick={() => handleSelectOption("B")}>
-                     <CardContent className="p-6 text-xl font-medium flex items-center justify-center h-full">
+                     <CardContent className="p-6 text-xl font-medium flex items-center justify-center min-h-[12rem]">
                         <p>{data.optionB}</p>
                     </CardContent>
                 </Card>
