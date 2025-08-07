@@ -1,3 +1,4 @@
+
 import { config } from 'dotenv';
 config();
 
@@ -9,3 +10,5 @@ import '@/ai/flows/generate-truth-or-dare.ts';
 import '@/ai/flows/generate-would-you-rather.ts';
 import '@/ai/flows/generate-two-truths-and-a-lie.ts';
 import '@/ai/flows/generate-most-likely-to.ts';
+import '@/ai/flows/generate-guess-the-name.ts';
+import '@/ai/flows/generate-image.ts';
