@@ -3,6 +3,7 @@ import {
   Drama,
   Heart,
   Puzzle,
+  Shuffle,
   Zap,
 } from "lucide-react";
 import Link from "next/link";
@@ -50,6 +51,14 @@ export default function Home() {
       icon: <Zap className="w-12 h-12" />,
       color: "bg-muted",
       textColor: "text-primary",
+    },
+    {
+      href: "/would-you-rather",
+      title: "Would You Rather",
+      description: "Make a tough choice between two fun scenarios.",
+      icon: <Shuffle className="w-12 h-12" />,
+      color: "bg-yellow-500/20",
+      textColor: "text-yellow-500",
     },
   ];
 
