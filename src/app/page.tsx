@@ -5,6 +5,7 @@ import {
   Puzzle,
   Shuffle,
   Zap,
+  HelpCircle,
 } from "lucide-react";
 import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
@@ -59,6 +60,14 @@ export default function Home() {
       icon: <Shuffle className="w-12 h-12" />,
       color: "bg-yellow-500/20",
       textColor: "text-yellow-500",
+    },
+    {
+      href: "/two-truths-and-a-lie",
+      title: "Two Truths and a Lie",
+      description: "Can you spot the lie? Test your intuition.",
+      icon: <HelpCircle className="w-12 h-12" />,
+      color: "bg-teal-500/20",
+      textColor: "text-teal-500",
     },
   ];
 
