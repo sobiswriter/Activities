@@ -106,7 +106,7 @@ export default function Home() {
             {activities.map((activity, index) => (
               <Dialog key={index}>
                 <DialogTrigger asChild>{activity.trigger}</DialogTrigger>
-                <DialogContent className="sm:max-w-[425px] md:max-w-lg bg-card">
+                <DialogContent className="sm:max-w-md md:max-w-lg lg:max-w-xl bg-card">
                   <DialogHeader>
                     <DialogTitle className="text-2xl font-headline text-primary">
                       {activity.title}
