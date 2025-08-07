@@ -8,3 +8,4 @@ import '@/ai/flows/generate-riddle.ts';
 import '@/ai/flows/generate-truth-or-dare.ts';
 import '@/ai/flows/generate-would-you-rather.ts';
 import '@/ai/flows/generate-two-truths-and-a-lie.ts';
+import '@/ai/flows/generate-most-likely-to.ts';

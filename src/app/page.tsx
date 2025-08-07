@@ -6,6 +6,7 @@ import {
   Shuffle,
   Zap,
   HelpCircle,
+  Users,
 } from "lucide-react";
 import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
@@ -69,6 +70,14 @@ export default function Home() {
       color: "bg-teal-500/20",
       textColor: "text-teal-500",
     },
+    {
+      href: "/most-likely-to",
+      title: "Who's Most Likely To...",
+      description: "Who in your group fits the bill? Point and laugh!",
+      icon: <Users className="w-12 h-12" />,
+      color: "bg-purple-500/20",
+      textColor: "text-purple-500",
+    },
   ];
 
   return (
@@ -84,7 +93,7 @@ export default function Home() {
               Your one-stop station for fun, ice-breaking activities. Pick a card and let the games begin!
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {activities.map((activity, index) => (
               <Link href={activity.href} key={index}>
                 <ActivityCard
