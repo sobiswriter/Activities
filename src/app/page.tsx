@@ -15,6 +15,7 @@ import {
   PersonStanding,
   Dumbbell,
   Gift,
+  PartyPopper,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -23,8 +24,7 @@ import { ActivityCard } from "@/components/activity-card";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { useToast } from "@/hooks/use-toast";
-
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 const activities = [
   {
@@ -125,15 +125,18 @@ const activities = [
   },
 ];
 
+type Activity = (typeof activities)[0];
+
 export default function Home() {
   const router = useRouter();
   const [isSpinning, setIsSpinning] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
-  const { toast } = useToast();
+  const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null);
 
   const handleRandomChallenge = () => {
     if (isSpinning) return;
     setIsSpinning(true);
+    setSelectedActivity(null);
 
     const totalDuration = 4000; // Total spin time
     const finalIndex = Math.floor(Math.random() * activities.length);
@@ -156,16 +159,15 @@ export default function Home() {
             spinTimeout = setTimeout(spin, currentDelay);
         } else {
             setHighlightedIndex(finalIndex);
-            const selectedActivity = activities[finalIndex];
-             toast({
-              title: "Let's Play!",
-              description: `You're heading to ${selectedActivity.title}`,
-            });
+            const activity = activities[finalIndex];
+            setSelectedActivity(activity);
+             
             setTimeout(() => {
-                router.push(selectedActivity.href);
+                router.push(activity.href);
                 setIsSpinning(false);
                 setHighlightedIndex(-1);
-            }, 1500); // Wait 1.5 seconds on the final choice
+                setSelectedActivity(null);
+            }, 2000); // Wait 2 seconds on the final choice
         }
     };
     
@@ -173,51 +175,69 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
-      <SiteHeader />
-      <main className="flex-1">
-        <section className="container mx-auto px-4 py-8 md:py-12">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold font-headline text-primary tracking-tight">
-              Welcome to Induction Ignition!
-            </h1>
-            <p className="mt-4 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-              Your one-stop station for fun, ice-breaking activities. Pick a card, or take a chance!
-            </p>
-            <div className="mt-8">
-              <Button size="lg" onClick={handleRandomChallenge} disabled={isSpinning} className="text-lg py-6 shadow-lg hover:shadow-primary/40 transition-shadow">
-                <Gift className="mr-2" />
-                {isSpinning ? "Finding a challenge..." : "I'm Feeling Lucky!"}
-              </Button>
+    <>
+      <div className="flex flex-col min-h-screen bg-background">
+        <SiteHeader />
+        <main className="flex-1">
+          <section className="container mx-auto px-4 py-8 md:py-12">
+            <div className="text-center mb-12">
+              <h1 className="text-4xl md:text-5xl font-bold font-headline text-primary tracking-tight">
+                Welcome to Induction Ignition!
+              </h1>
+              <p className="mt-4 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+                Your one-stop station for fun, ice-breaking activities. Pick a card, or take a chance!
+              </p>
+              <div className="mt-8">
+                <Button size="lg" onClick={handleRandomChallenge} disabled={isSpinning} className="text-lg py-6 shadow-lg hover:shadow-primary/40 transition-shadow">
+                  <Gift className="mr-2" />
+                  {isSpinning ? "Finding a challenge..." : "I'm Feeling Lucky!"}
+                </Button>
+              </div>
             </div>
-          </div>
-          <div className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8", isSpinning && "pointer-events-none")}>
-            {activities.map((activity, index) => {
-              const Wrapper = isSpinning ? 'div' : Link;
-              const props = isSpinning ? {} : { href: activity.href };
+            <div className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8", isSpinning && "pointer-events-none")}>
+              {activities.map((activity, index) => {
+                const Wrapper = isSpinning ? 'div' : Link;
+                const props = isSpinning ? {} : { href: activity.href };
 
-              return (
-                 <Wrapper {...props} key={index}>
-                    <ActivityCard
-                    title={activity.title}
-                    description={activity.description}
-                    icon={activity.icon}
-                    color={activity.color}
-                    textColor={activity.textColor}
-                    className={cn(
-                        "transition-all duration-100 ease-in-out",
-                        highlightedIndex === index && "ring-4 ring-primary ring-offset-4 ring-offset-background"
-                    )}
-                    />
-                </Wrapper>
-              );
-            })}
-          </div>
-        </section>
-      </main>
-      <footer className="py-6 text-center text-muted-foreground text-sm">
-        <p>Built for the Fresher's Induction. Have a blast!</p>
-      </footer>
-    </div>
+                return (
+                   <Wrapper {...props} key={index}>
+                      <ActivityCard
+                      title={activity.title}
+                      description={activity.description}
+                      icon={activity.icon}
+                      color={activity.color}
+                      textColor={activity.textColor}
+                      className={cn(
+                          "transition-all duration-100 ease-in-out",
+                          highlightedIndex === index && "ring-4 ring-primary ring-offset-4 ring-offset-background"
+                      )}
+                      />
+                  </Wrapper>
+                );
+              })}
+            </div>
+          </section>
+        </main>
+        <footer className="py-6 text-center text-muted-foreground text-sm">
+          <p>Built for the Fresher's Induction. Have a blast!</p>
+        </footer>
+      </div>
+
+      <Dialog open={!!selectedActivity} onOpenChange={() => setSelectedActivity(null)}>
+        <DialogContent className="text-center p-8">
+          <DialogHeader>
+            <div className="mx-auto bg-primary/20 rounded-full p-4 w-fit">
+                <PartyPopper className="w-12 h-12 text-primary" />
+            </div>
+            <DialogTitle className="text-3xl font-bold text-primary mt-4">
+              Let's Play!
+            </DialogTitle>
+            <DialogDescription className="text-xl">
+              You're heading to <span className="font-bold text-foreground">{selectedActivity?.title}</span>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
