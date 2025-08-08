@@ -21,6 +21,9 @@ import { useRouter } from "next/navigation";
 import { SiteHeader } from "@/components/site-header";
 import { ActivityCard } from "@/components/activity-card";
 import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
+import { cn } from "@/lib/utils";
+
 
 const activities = [
   {
@@ -123,11 +126,33 @@ const activities = [
 
 export default function Home() {
   const router = useRouter();
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
 
   const handleRandomChallenge = () => {
-    const randomIndex = Math.floor(Math.random() * activities.length);
-    const randomActivity = activities[randomIndex];
-    router.push(randomActivity.href);
+    if (isSpinning) return;
+    setIsSpinning(true);
+
+    const spinDuration = 3000; // 3 seconds
+    const spinInterval = 100; // ms
+    let spinTimer = 0;
+
+    const intervalId = setInterval(() => {
+      spinTimer += spinInterval;
+      setHighlightedIndex((prevIndex) => (prevIndex + 1) % activities.length);
+
+      if (spinTimer >= spinDuration) {
+        clearInterval(intervalId);
+        const finalIndex = Math.floor(Math.random() * activities.length);
+        setHighlightedIndex(finalIndex);
+        
+        setTimeout(() => {
+            router.push(activities[finalIndex].href);
+            setIsSpinning(false);
+            setHighlightedIndex(-1);
+        }, 1000); // wait 1 sec on final choice
+      }
+    }, spinInterval);
   };
 
   return (
@@ -143,24 +168,32 @@ export default function Home() {
               Your one-stop station for fun, ice-breaking activities. Pick a card, or take a chance!
             </p>
             <div className="mt-8">
-              <Button size="lg" onClick={handleRandomChallenge} className="text-lg py-6 shadow-lg hover:shadow-primary/40 transition-shadow">
+              <Button size="lg" onClick={handleRandomChallenge} disabled={isSpinning} className="text-lg py-6 shadow-lg hover:shadow-primary/40 transition-shadow">
                 <Gift className="mr-2" />
-                I'm Feeling Lucky!
+                {isSpinning ? "Finding a challenge..." : "I'm Feeling Lucky!"}
               </Button>
             </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {activities.map((activity, index) => (
-              <Link href={activity.href} key={index}>
-                <ActivityCard
-                  title={activity.title}
-                  description={activity.description}
-                  icon={activity.icon}
-                  color={activity.color}
-                  textColor={activity.textColor}
-                />
-              </Link>
-            ))}
+          <div className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8", isSpinning && "pointer-events-none")}>
+            {activities.map((activity, index) => {
+              const Wrapper = isSpinning ? 'div' : Link;
+              const props = isSpinning ? {} : { href: activity.href };
+
+              return (
+                 <Wrapper {...props} key={index}>
+                    <ActivityCard
+                    title={activity.title}
+                    description={activity.description}
+                    icon={activity.icon}
+                    color={activity.color}
+                    textColor={activity.textColor}
+                    className={cn(
+                        highlightedIndex === index && "ring-4 ring-primary ring-offset-4 ring-offset-background"
+                    )}
+                    />
+                </Wrapper>
+              );
+            })}
           </div>
         </section>
       </main>
