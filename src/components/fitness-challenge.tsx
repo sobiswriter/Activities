@@ -47,6 +47,9 @@ export function FitnessChallenge() {
 
   const scoreForm = useForm<z.infer<typeof scoreSchema>>({
     resolver: zodResolver(scoreSchema),
+    defaultValues: {
+      reps: 0,
+    }
   });
 
   useEffect(() => {
@@ -70,6 +73,7 @@ export function FitnessChallenge() {
     setGameState("challenge");
     setTimer(60);
     setTimerActive(false);
+    scoreForm.reset({ reps: 0 });
   }
 
   function onScoreSubmit(values: z.infer<typeof scoreSchema>) {
