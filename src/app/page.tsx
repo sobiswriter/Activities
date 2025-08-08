@@ -133,26 +133,36 @@ export default function Home() {
     if (isSpinning) return;
     setIsSpinning(true);
 
-    const spinDuration = 3000; // 3 seconds
-    const spinInterval = 100; // ms
-    let spinTimer = 0;
+    const totalDuration = 4000; // Total spin time
+    const finalIndex = Math.floor(Math.random() * activities.length);
+    let currentDelay = 50; // Initial fast delay
+    let elapsed = 0;
+    
+    let spinTimeout: NodeJS.Timeout;
 
-    const intervalId = setInterval(() => {
-      spinTimer += spinInterval;
-      setHighlightedIndex((prevIndex) => (prevIndex + 1) % activities.length);
+    const spin = () => {
+        setHighlightedIndex(prev => (prev + 1) % activities.length);
 
-      if (spinTimer >= spinDuration) {
-        clearInterval(intervalId);
-        const finalIndex = Math.floor(Math.random() * activities.length);
-        setHighlightedIndex(finalIndex);
+        elapsed += currentDelay;
         
-        setTimeout(() => {
-            router.push(activities[finalIndex].href);
-            setIsSpinning(false);
-            setHighlightedIndex(-1);
-        }, 1000); // wait 1 sec on final choice
-      }
-    }, spinInterval);
+        // Start slowing down in the last 1.5 seconds
+        if (elapsed > totalDuration - 1500) {
+            currentDelay *= 1.2; 
+        }
+
+        if (elapsed < totalDuration) {
+            spinTimeout = setTimeout(spin, currentDelay);
+        } else {
+            setHighlightedIndex(finalIndex);
+            setTimeout(() => {
+                router.push(activities[finalIndex].href);
+                setIsSpinning(false);
+                setHighlightedIndex(-1);
+            }, 1000); // Wait 1 second on the final choice
+        }
+    };
+    
+    spin();
   };
 
   return (
@@ -188,6 +198,7 @@ export default function Home() {
                     color={activity.color}
                     textColor={activity.textColor}
                     className={cn(
+                        "transition-all duration-100 ease-in-out",
                         highlightedIndex === index && "ring-4 ring-primary ring-offset-4 ring-offset-background"
                     )}
                     />
