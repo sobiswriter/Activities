@@ -6,7 +6,7 @@ export function SiteHeader() {
       <div className="container mx-auto flex items-center gap-2">
         <Sparkles className="w-6 h-6 text-primary" />
         <h2 className="text-xl font-bold font-headline text-foreground">
-          Induction Ignition
+          Team 7
         </h2>
       </div>
     </header>

@@ -182,7 +182,7 @@ export default function Home() {
           <section className="container mx-auto px-4 py-8 md:py-12">
             <div className="text-center mb-12">
               <h1 className="text-4xl md:text-5xl font-bold font-headline text-primary tracking-tight">
-                Welcome to Induction Ignition!
+                Welcome to Team 7!
               </h1>
               <p className="mt-4 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
                 Your one-stop station for fun, ice-breaking activities. Pick a card, or take a chance!
