@@ -13,6 +13,7 @@ import { Loader2, Trophy, Flame, Timer, Repeat } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const EXERCISES = ["Push-ups", "Squats", "Sit-ups"];
 type Exercise = "Push-ups" | "Squats" | "Sit-ups";
@@ -32,11 +33,13 @@ type Leaderboard = {
 };
 
 export function FitnessChallenge() {
-  const [gameState, setGameState] = useState<"setup" | "challenge" | "leaderboard">("setup");
+  const [gameState, setGameState] = useState<"leaderboard" | "setup" | "challenge">("leaderboard");
   const [timer, setTimer] = useState(60);
   const [timerActive, setTimerActive] = useState(false);
   const [leaderboard, setLeaderboard] = useState<Leaderboard>({ "Push-ups": [], Squats: [], "Sit-ups": [] });
   const [challengeConfig, setChallengeConfig] = useState<{ name: string; exercise: Exercise } | null>(null);
+  const [lastChallenge, setLastChallenge] = useState<{ name: string; exercise: Exercise } | null>(null);
+
 
   const { toast } = useToast();
 
@@ -79,6 +82,7 @@ export function FitnessChallenge() {
   function onScoreSubmit(values: z.infer<typeof scoreSchema>) {
     if (!challengeConfig) return;
     const newScore: Score = { name: challengeConfig.name, score: values.reps };
+    setLastChallenge(challengeConfig);
     setLeaderboard((prev) => {
       const newScores = [...prev[challengeConfig.exercise], newScore].sort((a, b) => b.score - a.score);
       return { ...prev, [challengeConfig.exercise]: newScores };
@@ -95,35 +99,55 @@ export function FitnessChallenge() {
     setTimerActive(true);
   }
   
-  if (gameState === "leaderboard" && challengeConfig) {
+  if (gameState === "leaderboard") {
       return (
           <div className="space-y-6">
-              <Card>
-                  <CardHeader>
-                      <CardTitle className="flex items-center gap-2 text-primary"><Trophy /> {challengeConfig.exercise} Leaderboard</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                      <Table>
-                          <TableHeader>
-                              <TableRow>
-                                  <TableHead>Rank</TableHead>
-                                  <TableHead>Name</TableHead>
-                                  <TableHead className="text-right">Score</TableHead>
-                              </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                              {leaderboard[challengeConfig.exercise].map((entry, index) => (
-                                  <TableRow key={index} className={entry.name === challengeConfig.name ? "bg-primary/10" : ""}>
-                                      <TableCell className="font-medium">{index + 1}</TableCell>
-                                      <TableCell>{entry.name}</TableCell>
-                                      <TableCell className="text-right">{entry.score}</TableCell>
-                                  </TableRow>
-                              ))}
-                          </TableBody>
-                      </Table>
-                  </CardContent>
-              </Card>
-              <Button onClick={() => setGameState("setup")} className="w-full">Start New Challenge</Button>
+              <Tabs defaultValue={lastChallenge?.exercise ?? "Push-ups"} className="w-full">
+                <TabsList className="grid w-full grid-cols-3">
+                    {EXERCISES.map((ex) => (
+                        <TabsTrigger key={ex} value={ex}>{ex}</TabsTrigger>
+                    ))}
+                </TabsList>
+                {EXERCISES.map((ex) => (
+                     <TabsContent key={ex} value={ex}>
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2 text-primary"><Trophy /> {ex} Leaderboard</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Rank</TableHead>
+                                            <TableHead>Name</TableHead>
+                                            <TableHead className="text-right">Score</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {leaderboard[ex].length === 0 ? (
+                                            <TableRow>
+                                                <TableCell colSpan={3} className="text-center text-muted-foreground">No scores yet. Be the first!</TableCell>
+                                            </TableRow>
+                                        ) : (
+                                            leaderboard[ex].map((entry, index) => (
+                                                <TableRow key={index} className={entry.name === lastChallenge?.name && ex === lastChallenge?.exercise ? "bg-primary/10" : ""}>
+                                                    <TableCell className="font-medium">{index + 1}</TableCell>
+                                                    <TableCell>{entry.name}</TableCell>
+                                                    <TableCell className="text-right">{entry.score}</TableCell>
+                                                </TableRow>
+                                            ))
+                                        )}
+                                    </TableBody>
+                                </Table>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+                ))}
+              </Tabs>
+              <Button onClick={() => setGameState("setup")} className="w-full text-lg py-6">
+                <Flame className="mr-2"/>
+                Start New Challenge
+              </Button>
           </div>
       )
   }
@@ -169,14 +193,15 @@ export function FitnessChallenge() {
                     </Form>
                 </CardContent>
             </Card>
-            <Button variant="outline" onClick={() => setGameState("setup")}>
-                <Repeat className="mr-2"/>
-                Change Exercise or Name
+            <Button variant="outline" onClick={() => setGameState("leaderboard")}>
+                <Trophy className="mr-2"/>
+                Back to Leaderboard
             </Button>
         </div>
     )
   }
 
+  // gameState is "setup"
   return (
     <Card>
         <CardHeader>
@@ -219,10 +244,13 @@ export function FitnessChallenge() {
                         </FormItem>
                         )}
                     />
-                    <Button type="submit" className="w-full">
-                        <Flame className="mr-2"/>
-                        Start Challenge
-                    </Button>
+                     <div className="flex flex-col-reverse sm:flex-row gap-2">
+                        <Button type="button" variant="outline" onClick={() => setGameState("leaderboard")} className="w-full">Cancel</Button>
+                        <Button type="submit" className="w-full">
+                            <Flame className="mr-2"/>
+                            Start Challenge
+                        </Button>
+                     </div>
                 </form>
             </Form>
       </CardContent>
