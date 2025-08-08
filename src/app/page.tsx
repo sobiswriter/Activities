@@ -21,8 +21,9 @@ import { useRouter } from "next/navigation";
 import { SiteHeader } from "@/components/site-header";
 import { ActivityCard } from "@/components/activity-card";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 
 
 const activities = [
@@ -128,6 +129,7 @@ export default function Home() {
   const router = useRouter();
   const [isSpinning, setIsSpinning] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const { toast } = useToast();
 
   const handleRandomChallenge = () => {
     if (isSpinning) return;
@@ -154,11 +156,16 @@ export default function Home() {
             spinTimeout = setTimeout(spin, currentDelay);
         } else {
             setHighlightedIndex(finalIndex);
+            const selectedActivity = activities[finalIndex];
+             toast({
+              title: "Let's Play!",
+              description: `You're heading to ${selectedActivity.title}`,
+            });
             setTimeout(() => {
-                router.push(activities[finalIndex].href);
+                router.push(selectedActivity.href);
                 setIsSpinning(false);
                 setHighlightedIndex(-1);
-            }, 1000); // Wait 1 second on the final choice
+            }, 1500); // Wait 1.5 seconds on the final choice
         }
     };
     
